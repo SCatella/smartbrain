@@ -21,13 +21,13 @@ class App extends Component {
           <Navigation>
             <Logo />
           </Navigation>
+        </header>
+        <main className="App-main">
           <Rank />
           <ImageLinkForm />
           {
           // <FaceRecognition />
           }
-        </header>
-        <main>
         </main>
       </div>
     );

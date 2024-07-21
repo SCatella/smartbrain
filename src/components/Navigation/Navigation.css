@@ -1,0 +1,21 @@
+.Navigation {
+  display: flex;
+  align-items: center;
+  height: 4em;
+}
+
+.Navigation .left-square {
+  flex-grow: 1;
+  align-content: center;
+  height: 100%;
+}
+
+.Navigation .middle {
+  flex-grow: 10;
+}
+
+.Navigation .right {
+  flex-grow: 1;
+  align-content: center;
+}
+

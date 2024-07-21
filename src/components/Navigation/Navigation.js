@@ -1,9 +1,18 @@
 import React from 'react';
 
-const Navigation = () => {
+import './Navigation.css';
+
+const Navigation = ({children}) => {
   return (
-    <nav style={{display: 'flex', justifyContent: 'flex-end'}}>
-      <p className='f3 link dim black underline pa3 pointer'>Sign Out</p>
+    <nav className='Navigation'>
+      <div className='left-square'>
+        {children}
+      </div>
+      <div className='middle'>
+      </div>
+      <p
+        className='right f3 link dim black underline ma0 pointer'
+      >Sign Out</p>
     </nav>
   )
 }
