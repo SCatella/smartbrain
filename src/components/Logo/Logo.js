@@ -11,11 +11,10 @@ const Logo = () => {
         className='Tilt'
         style=
           {{
-            height: '150px',
-            width: '150px',
-            backgroundColor: 'darkgreen',
             tiltMaxAngleX: '55',
             tiltMaxAngleY: '55',
+            height: '150px',
+            width: '150px',
             transitionSpeed: '800',
             alignContent: 'center'
           }}
