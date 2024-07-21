@@ -18,8 +18,9 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <Navigation />
-          <Logo />
+          <Navigation>
+            <Logo />
+          </Navigation>
           <Rank />
           <ImageLinkForm />
           {
