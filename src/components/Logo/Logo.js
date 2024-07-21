@@ -10,16 +10,25 @@ const Logo = () => {
       <Tilt
         className='Tilt'
         style=
-        {{
-          height: '150px',
-          width: '150px',
-          backgroundColor: 'darkgreen',
-          tiltMaxAngleX: '55',
-          tiltMaxAngleY: '55',
-          transitionSpeed: '800'
-        }}
+          {{
+            height: '150px',
+            width: '150px',
+            backgroundColor: 'darkgreen',
+            tiltMaxAngleX: '55',
+            tiltMaxAngleY: '55',
+            transitionSpeed: '800',
+            alignContent: 'center'
+          }}
       >
-        <img className='Tilt-inner pa3' src={brain} alt="brain logo" />
+        <img
+          className='Tilt-inner'
+          style=
+            {{
+              height: '85%'
+            }}
+          src={brain}
+          alt="brain logo"
+        />
       </Tilt>
     </div>
   )
