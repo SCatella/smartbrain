@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import Navigation from '../components/Navigation/Navigation';
+
 import './App.css';
 
 class App extends Component {
@@ -13,6 +15,12 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
+          <Navigation />
+          {
+          //<Logo />
+          // <ImageLinkForm />
+            // <FaceRecognition />
+          }
         </header>
         <main>
         </main>
