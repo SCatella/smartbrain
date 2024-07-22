@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import ParticlesBg from 'particles-bg';
+
 import Navigation from '../components/Navigation/Navigation';
 import Logo from '../components/Logo/Logo';
 import ImageLinkForm from '../components/ImageLinkForm/ImageLinkForm';
@@ -17,11 +19,12 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <Navigation>
-            <Logo />
-          </Navigation>
-        </header>
+      <ParticlesBg type="circle" bg={true} />
+      <header className="App-header">
+        <Navigation>
+          <Logo />  
+        </Navigation>
+      </header>
         <main className="App-main">
           <Rank />
           <ImageLinkForm />
