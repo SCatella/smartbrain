@@ -1,22 +1,83 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import ParticlesBg from 'particles-bg';
 
 import Navigation from '../components/Navigation/Navigation';
 import Logo from '../components/Logo/Logo';
 import ImageLinkForm from '../components/ImageLinkForm/ImageLinkForm';
 import Rank from '../components/Rank/Rank';
+import FaceRecognition from '../components/FaceRecognition/FaceRecognition';
 
 import './App.css';
+
+const personalAccessToken = process.env.REACT_APP_CLARIFAI_PAT;
+
+const returnClarifaiRequestOptions = (imageURL) => {
+  const PAT = personalAccessToken;
+  const USER_ID = '1ezm97mwpzy8';       
+  const APP_ID = '34532c71b4964643ab1db1c251aae348';
+  // const MODEL_ID = 'face-detection';
+  const IMAGE_URL = imageURL;
+  
+  const raw = JSON.stringify({
+  "user_app_id": {
+      "user_id": USER_ID,
+      "app_id": APP_ID
+  },
+  "inputs": [
+      {
+          "data": {
+              "image": {
+                  "url": IMAGE_URL
+              }
+          }
+      }
+  ]
+  });
+  
+  const requestOptions = {
+  method: 'POST',
+  headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Key ' + PAT
+  },
+  body: raw
+  };
+
+  return requestOptions;
+}
+  
+
 
 class App extends Component {
   constructor() {
     super();
-    this.state = {}
+    this.state = {
+      input: '',
+      imageURL: '',
+    }
   }
 
-  componentDidMount() {}
-
+  componentDidMount() { }
+  
+  onInputChange (event) {
+    console.log(event.target.value);
+  }
+  
+  onSubmit = () => {
+    const { input } = this.state;
+    
+    this.setState({ imageURL: input})
+    fetch('https://api.clarifai.com/v2/models/face-detection/outputs', returnClarifaiRequestOptions(input))
+    .then(response => response.json())
+    .catch(error => console.log('error', error))
+    .then(response => {
+      console.log('hi', response)
+    })
+  }
+  
   render() {
+    
+    
     return (
       <div className="App">
       <ParticlesBg type="circle" bg={true} />
@@ -27,9 +88,12 @@ class App extends Component {
       </header>
         <main className="App-main">
           <Rank />
-          <ImageLinkForm />
+          <ImageLinkForm
+            onInputChange={this.onInputChange}
+            onSubmit={this.onSubmit}
+          />
           {
-          // <FaceRecognition />
+          <FaceRecognition />
           }
         </main>
       </div>
