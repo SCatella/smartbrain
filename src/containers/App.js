@@ -59,19 +59,18 @@ class App extends Component {
 
   componentDidMount() { }
   
-  onInputChange (event) {
-    console.log(event.target.value);
+  onInputChange = (event) => {
+    this.setState({input: event.target.value});
   }
   
   onSubmit = () => {
-    const { input } = this.state;
+    this.setState({ imageURL: this.state.input })
     
-    this.setState({ imageURL: input})
-    fetch('https://api.clarifai.com/v2/models/face-detection/outputs', returnClarifaiRequestOptions(input))
+    fetch('https://api.clarifai.com/v2/models/face-detection/outputs', returnClarifaiRequestOptions(this.state.input))
     .then(response => response.json())
     .catch(error => console.log('error', error))
     .then(response => {
-      console.log('hi', response)
+      console.log('hi:', response.outputs[0].data.regions[0].region_info.bounding_box)
     })
   }
   
@@ -93,7 +92,7 @@ class App extends Component {
             onSubmit={this.onSubmit}
           />
           {
-          <FaceRecognition />
+          <FaceRecognition imageUrl={this.state.imageURL} />
           }
         </main>
       </div>
