@@ -66,18 +66,16 @@ class App extends Component {
     const height = Number(image.height);
 
     return {
-      width: width,
-      height: height,
-      leftCol: clarifaiFace.left_col * width,
-      topRow: clarifaiFace.top_row * height,
-      rightCol: width - (clarifaiFace.right_col * width),
-      bottomRow: height - (clarifaiFace.bottom_row * height)
+      top: Number(clarifaiFace.top_row * height),
+      right: Number(width - (clarifaiFace.right_col * width)),
+      bottom: Number(height - (clarifaiFace.bottom_row * height)),
+      left: Number(clarifaiFace.left_col * width),
     }
   }
 
   displayFaceBox = (box) => {
     console.log(box);
-    this.setState = ({ box: box });
+    this.setState({ box: box });
   }
   
   onInputChange = (event) => {
@@ -89,15 +87,21 @@ class App extends Component {
     const { displayFaceBox, calculateFaceLocation } = this;
     this.setState({ imageURL: input })
     
-    fetch('https://api.clarifai.com/v2/models/face-detection/outputs', returnClarifaiRequestOptions(input))
+  fetch('https://api.clarifai.com/v2/models/face-detection/outputs', returnClarifaiRequestOptions(input))
     .then(response => response.json())
     .catch(error => console.log('error', error))
+    .then(response => {
+      if (response.status.code === 30002) {
+        alert('Could not process request.');
+        throw new Error('Could not process request due to copyright.');
+      }
+    })
     .then(response => displayFaceBox(calculateFaceLocation(response)))
+    .catch(error => console.log(error))
   }
 
   
   render() {
-    
     return (
       <div className="App">
       <ParticlesBg type="circle" bg={true} />
