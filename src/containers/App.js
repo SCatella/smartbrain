@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
-import ParticlesBg from 'particles-bg';
 
 import Navigation from '../components/Navigation/Navigation';
 import Logo from '../components/Logo/Logo';
+import SignIn from '../components/SignIn/SignIn'
 import ImageLinkForm from '../components/ImageLinkForm/ImageLinkForm';
 import Rank from '../components/Rank/Rank';
 import FaceRecognition from '../components/FaceRecognition/FaceRecognition';
 
 import './App.css';
+
 
 const personalAccessToken = process.env.REACT_APP_CLARIFAI_PAT;
 
@@ -65,18 +66,20 @@ class App extends Component {
     const height = Number(image.height);
     const clarifaiFace = data.outputs[0].data.regions;
 
-    return clarifaiFace.map((obj) => {
-      const boundingBox = obj.region_info.bounding_box
-
-      return {
-        top: Number(boundingBox.top_row * height),
-        right: Number(width - (boundingBox.right_col * width)),
-        bottom: Number(height - (boundingBox.bottom_row * height)),
-        left: Number(boundingBox.left_col * width),
+    (data.status.code === 30002)
+    ? alert('Could not process request due to copyright or improper access.')
+      (function () { throw new Error('Could not process request due to copyright or improper access.') }())
+    : clarifaiFace.map((obj) => {
+        const boundingBox = obj.region_info.bounding_box
+  
+        return {
+          top: Number(boundingBox.top_row * height),
+          right: Number(width - (boundingBox.right_col * width)),
+          bottom: Number(height - (boundingBox.bottom_row * height)),
+          left: Number(boundingBox.left_col * width),
+        }
       }
-    })
-    
-    
+    )   
   }
 
   // .then(response => {
@@ -110,13 +113,13 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-      <ParticlesBg type="circle" bg={true} />
-      <header className="App-header">
-        <Navigation>
-          <Logo />  
-        </Navigation>
-      </header>
+        <header className="App-header">
+          <Navigation>
+            <Logo />  
+          </Navigation>
+        </header>
         <main className="App-main">
+          <SignIn />
           <Rank />
           <ImageLinkForm
             onInputChange={this.onInputChange}
