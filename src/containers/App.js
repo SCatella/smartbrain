@@ -53,28 +53,41 @@ class App extends Component {
     this.state = {
       input: '',
       imageURL: '',
-      box: {}
+      box: []
     }
   }
 
   componentDidMount() { }
 
   calculateFaceLocation = (data) => {
-    const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
     const image = document.getElementById('inputimage');
     const width = Number(image.width);
     const height = Number(image.height);
+    const clarifaiFace = data.outputs[0].data.regions;
 
-    return {
-      top: Number(clarifaiFace.top_row * height),
-      right: Number(width - (clarifaiFace.right_col * width)),
-      bottom: Number(height - (clarifaiFace.bottom_row * height)),
-      left: Number(clarifaiFace.left_col * width),
-    }
+    return clarifaiFace.map((obj) => {
+      const boundingBox = obj.region_info.bounding_box
+
+      return {
+        top: Number(boundingBox.top_row * height),
+        right: Number(width - (boundingBox.right_col * width)),
+        bottom: Number(height - (boundingBox.bottom_row * height)),
+        left: Number(boundingBox.left_col * width),
+      }
+    })
+    
+    
   }
 
+  // .then(response => {
+  //     if (response.status.code === 30002) {
+  //       alert('Could not process request.');
+  //       throw new Error('Could not process request due to copyright.');
+  //     } else {
+  //     }
+  //   })        
+
   displayFaceBox = (box) => {
-    console.log(box);
     this.setState({ box: box });
   }
   
@@ -89,13 +102,6 @@ class App extends Component {
     
   fetch('https://api.clarifai.com/v2/models/face-detection/outputs', returnClarifaiRequestOptions(input))
     .then(response => response.json())
-    .catch(error => console.log('error', error))
-    .then(response => {
-      if (response.status.code === 30002) {
-        alert('Could not process request.');
-        throw new Error('Could not process request due to copyright.');
-      }
-    })
     .then(response => displayFaceBox(calculateFaceLocation(response)))
     .catch(error => console.log(error))
   }

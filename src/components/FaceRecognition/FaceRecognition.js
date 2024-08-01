@@ -2,6 +2,15 @@ import React from 'react';
 import './FaceRecognition.css';
 
 const FaceRecognition = ({ imageUrl, box }) => {
+  const faceBoxes = box.map((obj, index) => {
+    return (
+      <div
+        className='bounding-box'
+        style={{ ...obj }}
+        key={index}
+      >
+      </div>)
+  })
   
   return (
     <div className='center ma'>
@@ -13,10 +22,8 @@ const FaceRecognition = ({ imageUrl, box }) => {
           width='500px'
           height='auto'
         />
-        <div
-          className='bounding-box'
-          style={{ ...box }}
-          >
+        <div>
+          {faceBoxes}
         </div>
       </div>
     </div>
