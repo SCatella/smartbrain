@@ -12,6 +12,7 @@ const FaceRecognition = ({ imageUrl, box }) => {
       </div>)
   })
   
+  
   return (
     <div className='center ma'>
       <div className='image-container absolute mt2'>

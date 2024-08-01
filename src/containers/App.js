@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 
 import Navigation from '../components/Navigation/Navigation';
 import Logo from '../components/Logo/Logo';
-import SignIn from '../components/SignIn/SignIn'
+import SignIn from '../components/SignIn/SignIn';
+import Register from '../components/Register/Register';
 import ImageLinkForm from '../components/ImageLinkForm/ImageLinkForm';
 import Rank from '../components/Rank/Rank';
 import FaceRecognition from '../components/FaceRecognition/FaceRecognition';
@@ -53,8 +54,10 @@ class App extends Component {
     super();
     this.state = {
       input: '',
-      imageURL: '',
-      box: []
+      imageUrl: '',
+      box: [],
+      route: 'signin',
+      isSignedIn: false
     }
   }
 
@@ -65,11 +68,12 @@ class App extends Component {
     const width = Number(image.width);
     const height = Number(image.height);
     const clarifaiFace = data.outputs[0].data.regions;
-
-    (data.status.code === 30002)
-    ? alert('Could not process request due to copyright or improper access.')
-      (function () { throw new Error('Could not process request due to copyright or improper access.') }())
-    : clarifaiFace.map((obj) => {
+    
+    if (data.status.code === 30002) {
+      alert('Cannot process request. Insufficient permissions or copyright');
+      throw new Error(data.status.description);
+    } else {
+      return clarifaiFace.map((obj) => {
         const boundingBox = obj.region_info.bounding_box
   
         return {
@@ -78,17 +82,9 @@ class App extends Component {
           bottom: Number(height - (boundingBox.bottom_row * height)),
           left: Number(boundingBox.left_col * width),
         }
-      }
-    )   
+      })
+    }
   }
-
-  // .then(response => {
-  //     if (response.status.code === 30002) {
-  //       alert('Could not process request.');
-  //       throw new Error('Could not process request due to copyright.');
-  //     } else {
-  //     }
-  //   })        
 
   displayFaceBox = (box) => {
     this.setState({ box: box });
@@ -101,35 +97,56 @@ class App extends Component {
   onSubmit = () => {
     const { input } = this.state;
     const { displayFaceBox, calculateFaceLocation } = this;
-    this.setState({ imageURL: input })
+    this.setState({ imageUrl: input })
     
-  fetch('https://api.clarifai.com/v2/models/face-detection/outputs', returnClarifaiRequestOptions(input))
-    .then(response => response.json())
-    .then(response => displayFaceBox(calculateFaceLocation(response)))
-    .catch(error => console.log(error))
+    fetch('https://api.clarifai.com/v2/models/face-detection/outputs', returnClarifaiRequestOptions(input))
+      .then(response => response.json())
+      .catch(error => console.log(error))
+      .then(response => displayFaceBox(calculateFaceLocation(response)))
+      .catch(error => console.log(error))
+  }
+
+  onRouteChange = (route) => {
+    if (route === 'signout') {
+      this.setState({ isSignedIn: false })
+    } else if (route === 'home') {
+      this.setState({ isSignedIn: true })
+    }
+    this.setState({route: route});
   }
 
   
   render() {
+    const { onRouteChange, onInputChange, onSubmit } = this;
+    const { isSignedIn, route, imageUrl, box } = this.state;
+
     return (
       <div className="App">
         <header className="App-header">
-          <Navigation>
+          <Navigation isSignedIn={isSignedIn} onRouteChange={onRouteChange}>
             <Logo />  
           </Navigation>
         </header>
         <main className="App-main">
-          <SignIn />
-          <Rank />
-          <ImageLinkForm
-            onInputChange={this.onInputChange}
-            onSubmit={this.onSubmit}
-          />
-          
-          <FaceRecognition
-            imageUrl={this.state.imageURL}
-            box={this.state.box}
-          />
+        {(route === 'home')
+          ? <div>
+              <Rank />
+              <ImageLinkForm
+                onInputChange={onInputChange}
+                onSubmit={onSubmit}
+              />
+              
+              <FaceRecognition
+                imageUrl={imageUrl}
+                box={box}
+              />
+            </div>
+          : (
+            (route === 'signin')
+              ? <SignIn onRouteChange={onRouteChange} />
+              : <Register onRouteChange={onRouteChange} />
+          )
+        }
         </main>
       </div>
     );
