@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import Navigation from '../components/Navigation/Navigation';
 import Logo from '../components/Logo/Logo';
-import SignIn from '../components/SignIn/SignIn';
+import SignIn from './SignIn/SignIn';
 import Register from '../components/Register/Register';
 import ImageLinkForm from '../components/ImageLinkForm/ImageLinkForm';
 import Rank from '../components/Rank/Rank';
