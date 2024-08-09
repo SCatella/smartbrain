@@ -134,13 +134,39 @@ class App extends Component {
   };
 
   onFieldChange = (key) => (event) => {
-      console.log(this.state)
-      this.setState({[key]: event.target.value})
+    const user = this.state.user;
+
+    user[key] = event.target.value;
+    this.setState({ user })
+    console.log(this.state)
+  };
+
+  onUserSubmit = (route) => () => {
+    const { name, email, password } = this.state.user;
+    fetch(`http://localhost:3000/${route}`, {
+      method: 'post',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        name: name,
+        email: email,
+        password: password
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.userValid === true) {
+          this.loadUser(data.user);
+          this.onRouteChange('home');            
+        } else {
+          new Error('Response Code:', data.responseCode, ':', data.errorMessage);
+          alert(data.errorMessage);
+        }
+      })
   };
 
   
   render() {
-    const { onRouteChange, onFieldChange, onInputChange, onSubmit, loadUser } = this;
+    const { onRouteChange, onFieldChange, onInputChange, onSubmit, onUserSubmit, loadUser } = this;
     const { isSignedIn, user, route, imageUrl, box } = this.state;
 
     return (
@@ -172,6 +198,7 @@ class App extends Component {
               ? <SignIn
                   onRouteChange={onRouteChange}
                   onFieldChange={onFieldChange}
+                  onUserSubmit={onUserSubmit}
                   loadUser={loadUser}
                 />
               : <Register
