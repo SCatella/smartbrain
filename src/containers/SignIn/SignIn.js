@@ -5,25 +5,19 @@ class SignIn extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      signInEmail: '',
-      signInPassword: ''
-    }
-  }
-  onEmailChange = (event) => {
-    this.setState({signInEmail: event.target.value})
-  };
-
-  onPasswordChange = (event) => {
-    this.setState({signInPassword: event.target.value})
+      email: '',
+      password: ''
+    };
   };
 
   onSubmitSignIn = () => {
+    console.log('submit:', this.state)
     fetch('http://localhost:3000/signin', {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        email: this.state.signInEmail,
-        password: this.state.signInPassword
+        email: this.state.email,
+        password: this.state.password
       })
     })
       .then(response => response.json())
@@ -39,7 +33,7 @@ class SignIn extends React.Component {
   };
 
   render() {
-    const { onRouteChange } = this.props;
+    const { onRouteChange, onFieldChange } = this.props;
 
     return (
       <article className="br3 ba b--black-10 mv4 w-100 w-50-m w-25-l mw6 shadow-5 center">
@@ -54,7 +48,7 @@ class SignIn extends React.Component {
                     type="email"
                     name="email-address"
                     id="email-address"
-                    onChange={this.onEmailChange}
+                    onChange={onFieldChange('email')}
                   />
                 </div>
                 <div className="mv3">
@@ -64,7 +58,7 @@ class SignIn extends React.Component {
                     type="password"
                     name="password"
                     id="password"
-                    onChange={this.onPasswordChange}
+                    onChange={onFieldChange('password')}
                   />
                 </div>
               </div>

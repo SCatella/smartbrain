@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import Navigation from '../components/Navigation/Navigation';
 import Logo from '../components/Logo/Logo';
 import SignIn from './SignIn/SignIn';
-import Register from '../components/Register/Register';
+import Register from './Register/Register';
 import ImageLinkForm from '../components/ImageLinkForm/ImageLinkForm';
 import Rank from '../components/Rank/Rank';
 import FaceRecognition from '../components/FaceRecognition/FaceRecognition';
@@ -67,7 +67,7 @@ class App extends Component {
         joined: ''
       }
     }
-  }
+  };
 
   loadUser = (user) => {
     this.setState({
@@ -79,7 +79,7 @@ class App extends Component {
         joined: user.joined
       }
     })
-  }
+  };
 
   calculateFaceLocation = (data) => {
     const image = document.getElementById('inputimage');
@@ -102,15 +102,15 @@ class App extends Component {
         }
       })
     }
-  }
+  };
 
   displayFaceBox = (box) => {
     this.setState({ box: box });
-  }
+  };
   
   onInputChange = (event) => {
     this.setState({input: event.target.value});
-  }
+  };
   
   onSubmit = () => {
     const { input } = this.state;
@@ -122,7 +122,7 @@ class App extends Component {
       .catch(error => console.log(error))
       .then(response => displayFaceBox(calculateFaceLocation(response)))
       .catch(error => console.log(error))
-  }
+  };
 
   onRouteChange = (route) => {
     if (route === 'signout') {
@@ -131,11 +131,16 @@ class App extends Component {
       this.setState({ isSignedIn: true })
     }
     this.setState({route: route});
-  }
+  };
+
+  onFieldChange = (key) => (event) => {
+      console.log(this.state)
+      this.setState({[key]: event.target.value})
+  };
 
   
   render() {
-    const { onRouteChange, onInputChange, onSubmit, loadUser } = this;
+    const { onRouteChange, onFieldChange, onInputChange, onSubmit, loadUser } = this;
     const { isSignedIn, user, route, imageUrl, box } = this.state;
 
     return (
@@ -166,15 +171,19 @@ class App extends Component {
             (route === 'signin')
               ? <SignIn
                   onRouteChange={onRouteChange}
+                  onFieldChange={onFieldChange}
                   loadUser={loadUser}
                 />
-              : <Register onRouteChange={onRouteChange} />
+              : <Register
+                  onRouteChange={onRouteChange}
+                  onFieldChange={onFieldChange}
+                />
           )
         }
         </main>
       </div>
     );
-  }
-}
+  };
+};
 
 export default App;
