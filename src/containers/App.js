@@ -61,12 +61,6 @@ class App extends Component {
     }
   }
 
-  componentDidMount() {
-    fetch('http://127.0.0.1:3000/')
-      .then(response => response.json())
-      .then(console.log)
-  }
-
   calculateFaceLocation = (data) => {
     const image = document.getElementById('inputimage');
     const width = Number(image.width);
