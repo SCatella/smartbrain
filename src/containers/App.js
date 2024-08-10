@@ -138,7 +138,6 @@ class App extends Component {
 
     user[key] = event.target.value;
     this.setState({ user })
-    console.log(this.state)
   };
 
   onUserSubmit = (route) => () => {
@@ -204,6 +203,7 @@ class App extends Component {
               : <Register
                   onRouteChange={onRouteChange}
                   onFieldChange={onFieldChange}
+                  onUserSubmit={onUserSubmit}
                 />
           )
         }
