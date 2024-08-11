@@ -112,18 +112,7 @@ class App extends Component {
     this.setState({input: event.target.value});
   };
   
-  onSubmit = () => {
-    const { input } = this.state;
-    const { displayFaceBox, calculateFaceLocation } = this;
-    this.setState({ imageUrl: input })
-    
-    fetch('https://api.clarifai.com/v2/models/face-detection/outputs', returnClarifaiRequestOptions(input))
-      .then(response => response.json())
-      .catch(error => console.log(error))
-      .then(response => displayFaceBox(calculateFaceLocation(response)))
-      .catch(error => console.log(error))
-  };
-
+  
   onRouteChange = (route) => {
     if (route === 'signout') {
       this.setState({ isSignedIn: false })
@@ -132,40 +121,92 @@ class App extends Component {
     }
     this.setState({route: route});
   };
-
+  
   onFieldChange = (key) => (event) => {
     const user = this.state.user;
-
+    
     user[key] = event.target.value;
     this.setState({ user })
   };
-
-  onUserSubmit = (route) => () => {
-    const { name, email, password } = this.state.user;
-    fetch(`http://localhost:3000/${route}`, {
-      method: 'post',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        name: name,
-        email: email,
-        password: password
-      })
-    })
-      .then(response => response.json())
-      .then(data => {
-        if (data.userValid === true && data.responseCode === 200) {
-          this.loadUser(data.user);
-          this.onRouteChange('home');            
-        } else if (data.responseCode !== 200) {
-          new Error('Response Code:', data.responseCode, ':', data.errorMessage);
-          alert(data.errorMessage);
-        }
-      })
-  };
-
   
-  render() {
-    const { onRouteChange, onFieldChange, onInputChange, onSubmit, onUserSubmit, loadUser } = this;
+  onUserSubmit = (method, route, contentType) => () => {
+  const { id, name, email, password } = this.state.user;
+  const user = () => {
+    let userInformation = {}
+    
+    switch (route) {
+      case 'signin':
+        userInformation = { email, password };        
+        break;
+      case 'register':
+        userInformation = { name, email, password };         
+        break;
+      case 'image':
+        userInformation = { id };         
+        break;
+        
+      default:
+        userInformation = { id, name, email, password };
+        break;
+      }
+      
+    return userInformation
+  }
+  
+  const userResponseHandler = (data) => {
+    if (data.userValid === true && data.responseCode === 200) {
+      this.loadUser(data.user);
+      this.onRouteChange('home');
+    } else if (data.responseCode !== 200) {
+      new Error('Response Code:', data.responseCode, ':', data.errorMessage);
+      alert(data.errorMessage);
+    }
+  }
+    
+  fetch(`http://localhost:3000/${route}`, {
+    method: method,
+    headers: {'Content-Type': contentType},
+    body: JSON.stringify(user())
+  })
+  .then(response => response.json())
+    .then(data => {
+    
+    switch (route) {
+      case 'signin':
+        userResponseHandler(data);
+        break;
+      case 'register':
+        userResponseHandler(data)
+        break;
+      case ('image'):
+        this.setState(Object.assign(this.state.user, { entries: data }))
+        
+        break;
+      default:
+        console.log('default')
+        break;
+    }
+  })
+};
+          
+onSubmit = () => {
+  const { input } = this.state;
+  const { displayFaceBox, calculateFaceLocation, onUserSubmit } = this;
+  this.setState({ imageUrl: input })
+  
+  onUserSubmit('put', 'image', 'application/json')();
+  
+  fetch('https://api.clarifai.com/v2/models/face-detection/outputs', returnClarifaiRequestOptions(input))
+  .then(response => response.json())
+  .catch(error => console.log(error))
+  .then(response => {
+    displayFaceBox(calculateFaceLocation(response))
+    })
+    .catch(error => console.log(error))
+};
+
+render() {
+  const { onRouteChange, onFieldChange, onInputChange, onSubmit, onUserSubmit, loadUser } = this;
     const { isSignedIn, user, route, imageUrl, box } = this.state;
 
     return (
