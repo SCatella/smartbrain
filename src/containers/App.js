@@ -153,10 +153,10 @@ class App extends Component {
     })
       .then(response => response.json())
       .then(data => {
-        if (data.userValid === true) {
+        if (data.userValid === true && data.responseCode === 200) {
           this.loadUser(data.user);
           this.onRouteChange('home');            
-        } else {
+        } else if (data.responseCode !== 200) {
           new Error('Response Code:', data.responseCode, ':', data.errorMessage);
           alert(data.errorMessage);
         }
